@@ -1,0 +1,44 @@
+const int lm35Pin = A0;               // LM35 temperature sensor is connected to A0
+const int ledPin = 13;                  // Onboard LED is connected to pin 13
+
+unsigned long previousMillis = 0;
+const long interval1 = 250;                     // Blink interval for temperature < 30°C
+const long interval2 = 500;                        // Blink interval for temperature >= 30°C
+bool ledState = LOW;
+
+void setup() 
+{
+  pinMode(ledPin, OUTPUT);                 // Set the LED pin as an output
+  Serial.begin(9600);                              // Initialize serial communication for debugging
+}
+
+void loop() 
+{
+   int rawValue = analogRead(lm35Pin);                       // Read the analog value from the LM35 temperature sensor
+
+    float temperature = (rawValue * 5.0 / 1023.0) * 100.0;                      // Convert the raw analog value to temperature in Celsius
+
+  Serial.print("Temperature (Celsius): ");
+  Serial.println(temperature);
+
+  unsigned long currentMillis = millis();
+
+  if (temperature < 30.0) 
+  {
+    if (currentMillis - previousMillis >= interval1)
+    {
+      previousMillis = currentMillis;
+      ledState = !ledState;                     // Toggle LED state
+      digitalWrite(ledPin, ledState);
+    }
+  } 
+  else 
+  {
+    if (currentMillis - previousMillis >= interval2)
+    {
+      previousMillis = currentMillis;
+      ledState = !ledState;                     // Toggle LED state
+      digitalWrite(ledPin, ledState);
+    }
+  }
+}
